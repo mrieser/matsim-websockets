@@ -1,5 +1,5 @@
-# matsim-example-project
+# matsim-websockets
 
-A small example of how to use MATSim as a library.
+A technology test to send data between two (or more) processes,
+e.g. to send data from the simulation to some other process for live visualization.
 
-By default, this project uses the last stable version. In order to get the development snapshot, edit `pom.xml`.
