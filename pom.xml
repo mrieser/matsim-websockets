@@ -3,19 +3,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.matsim</groupId>
-	<artifactId>matsim-example-project</artifactId>
+	<artifactId>matsim-websockets</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>MATSim example project</name>
-	<description>MATSim example project</description>
+	<name>MATSim Websockets Tryout</name>
+	<description>tryout sending MATSim data over websockets</description>
 
 	<repositories>
-		<repository>
-			<!-- Geotools is not on Maven central -->
-			<id>osgeo</id>
-			<name>Geotools repository</name>
-			<url>http://download.osgeo.org/webdav/geotools</url>
-		</repository>
 		<repository>
 			<id>matsim</id>
 			<url>http://dl.bintray.com/matsim/matsim</url>
@@ -41,13 +35,17 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		
-<!-- 		Example of how to add a contrib.  Note that the version numbers need to be consistent with the matsim version above! -->
- 		<dependency>
-			<groupId>org.matsim.contrib</groupId>
-			<artifactId>otfvis</artifactId>
-			<version>0.8.0</version>
+		<dependency>
+			<groupId>com.sparkjava</groupId>
+			<artifactId>spark-core</artifactId>
+			<version>2.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.21</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -57,8 +55,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<showWarnings>false</showWarnings>
 					<showDeprecation>false</showDeprecation>
 					<encoding>UTF-8</encoding>
