@@ -15,17 +15,16 @@ import java.util.concurrent.TimeUnit;
  * @author mrieser / Senozon AG
  */
 @WebSocket(maxTextMessageSize = 64 * 1024)
-public class SimpleSocket {
+public class HelloSocket {
 	private final CountDownLatch closeLatch;
 
-	@SuppressWarnings("unused")
 	private Session session;
 
-	public SimpleSocket() {
+	public HelloSocket() {
 		this.closeLatch = new CountDownLatch(1);
 	}
 
-	public boolean awaitClose(int duration, TimeUnit unit) throws InterruptedException {
+	/*package*/ boolean awaitClose(int duration, TimeUnit unit) throws InterruptedException {
 		return this.closeLatch.await(duration,unit);
 	}
 

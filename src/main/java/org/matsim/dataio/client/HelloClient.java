@@ -9,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author mrieser / Senozon AG
  */
-public class Client {
+public class HelloClient {
 
 	public static void main(String[] args) {
 		String uri = "ws://localhost:9090/matsim/hello";
 
 		WebSocketClient client = new WebSocketClient();
-		SimpleSocket socket = new SimpleSocket();
+		HelloSocket socket = new HelloSocket();
 
 		try {
 			client.start();

@@ -15,14 +15,23 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author mrieser / Senozon AG
  */
 @WebSocket
-public class EventsWebsocket {
-	private static final Queue<Session> sessions = new ConcurrentLinkedQueue<>();
-	private static final Queue<Session> binarySessions = new ConcurrentLinkedQueue<>();
+public class MessagesWebsocket {
+	private static final Queue<Session> listeners = new ConcurrentLinkedQueue<>();
+	private static final Queue<Session> binaryListeners = new ConcurrentLinkedQueue<>();
 
-	public EventsWebsocket() {
-		Thread eventsCreator = new Thread(new EventsCreator());
-		eventsCreator.setDaemon(true);
-		eventsCreator.start();
+	private static MessagesProducer msgProducer;
+
+	/**
+	 * Workaround for initialization, as the constructor is not called by us, but by the framework.
+	 * Should no longer be needed with Spark 2.6, hopefully.
+	 */
+	/*package*/ static void init(MessagesProducer msgProducer) {
+		MessagesWebsocket.msgProducer = msgProducer;
+	}
+
+	public MessagesWebsocket() {
+		// part of the workaround, msgProducer should be passed as Constructor-argument
+		MessagesWebsocket.msgProducer.addListener(message -> broadcastMessage(message));
 	}
 
 	@OnWebSocketConnect
@@ -32,37 +41,37 @@ public class EventsWebsocket {
 
 	@OnWebSocketClose
 	public void closed(Session session, int statusCode, String reason) {
-		sessions.remove(session);
+		listeners.remove(session);
 	}
 
 	@OnWebSocketMessage
 	public void message(Session session, String message) throws IOException {
 		if ("start".equalsIgnoreCase(message)) {
-			sessions.add(session);
+			listeners.add(session);
 			System.out.println("NEW SUBSCRIBER!");
 		}
 		if ("binstart".equalsIgnoreCase(message)) {
-			binarySessions.add(session);
+			binaryListeners.add(session);
 			System.out.println("NEW BINARY SUBSCRIBER!");
 		}
 		if ("stop".equalsIgnoreCase(message)) {
-			sessions.remove(session);
-			binarySessions.remove(session);
+			listeners.remove(session);
+			binaryListeners.remove(session);
 			System.out.println("bye subscriber");
 		}
 	}
 
-	private static void broadcastEvent(String event) {
-		for (Session session : sessions) {
+	private static void broadcastMessage(String message) {
+		for (Session session : listeners) {
 			try {
-				session.getRemote().sendString(event);
+				session.getRemote().sendString(message);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		ByteBuffer bytes = ByteBuffer.wrap(event.getBytes());
-		for (Session session : binarySessions) {
+		ByteBuffer bytes = ByteBuffer.wrap(message.getBytes());
+		for (Session session : binaryListeners) {
 			try {
 				session.getRemote().sendBytes(bytes);
 			} catch (IOException e) {
@@ -71,21 +80,5 @@ public class EventsWebsocket {
 		}
 	}
 
-	private static class EventsCreator implements Runnable {
-		long id = 0;
-		@Override
-		public void run() {
-			while (true) {
-				String event = "event " + id;
-				id++;
-				broadcastEvent(event);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 
 }

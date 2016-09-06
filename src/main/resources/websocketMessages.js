@@ -1,6 +1,6 @@
 //Establish the WebSocket connection and set up event handlers
-var webSocket = new WebSocket("ws://localhost:9090/matsim/events");
-webSocket.onmessage = function (msg) { updateEvents(msg); };
+var webSocket = new WebSocket("ws://localhost:9090/matsim/messages");
+webSocket.onmessage = function (msg) { updateMessages(msg); };
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 
 id("send").addEventListener("click", function () {
@@ -18,10 +18,10 @@ function sendMessage(message) {
     }
 }
 
-function updateEvents(msg) {
+function updateMessages(msg) {
 	var data = msg.data;
-	insert("events", "<br/>");
-	insert("events", data);
+	insert("messages", "<br/>");
+	insert("messages", data);
 }
 
 //Helper function for inserting HTML as the first child of an element
